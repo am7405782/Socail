@@ -18,29 +18,21 @@ class CreatAccount extends Cubit<CratAccountState> {
     emit((ChangeIconSuffix()));
   }
 
-  // void authStateChanges() {
-  //   FirebaseAuth.instance.authStateChanges().listen((User? user) {
-  //     if (user == null) {
-  //       print('User is currently signed out!');
-  //     } else {
-  //       print('User is signed in!');
-  //     }
-  //   });
-  // }
-
   void creatUser({
     required String email,
     required String password,
+    required String phone,
+    required String name,
   }) {
     emit(CreatLodingState());
     FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
+      print(value.user?.email);
       emit(CreatScafullState());
     }).catchError((error) {
+      print(error.toString());
       emit(CreatErrorState(error.toString()));
     });
   }
-
-  void signInWithEmailAndPassword() async {}
 }

@@ -18,13 +18,37 @@ class LoginBloc extends Cubit<LoginState> {
     emit(ChangeIconSuffix());
   }
 
-  void authStateChanges() {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user == null) {
-        print('User is currently signed out!');
-      } else {
-        print('User is signed in!');
+  // void authStateChanges() {
+  //   FirebaseAuth.instance.authStateChanges().listen((User? user) {
+  //     if (user == null) {
+  //       print('User is currently signed out!');
+  //     } else {
+  //       print('User is signed in!');
+  //     }
+  //   });
+  // }
+  void signInWithemailpassword(
+    String email,
+    String password,
+  ) {
+    try {
+      emit(LoadingLoginState());
+      FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password)
+          .then((value) {
+        print(value.user?.email);
+        emit(ScafullLoginState());
+      }).catchError((eror) {
+        emit(ErorrLoginState(eror));
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+        emit(ErorrLoginState(e));
+      } else if (e.code == 'wrong-password') {
+        emit(ErorrLoginState(e));
+        print('Wrong password provided for that user.');
       }
-    });
+    }
   }
 }

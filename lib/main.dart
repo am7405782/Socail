@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/shard/Blocopserved.dart';
@@ -8,12 +10,18 @@ import 'package:flutter_application_2/feather/OnBording/presentation/Views/OnBor
 import 'package:flutter_application_2/feather/Register/presentation/views/CreatAccountViews.dart';
 import 'package:flutter_application_2/feather/Splash/presentation/views/splash_view.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  Platform.isAndroid
+      ? await Firebase.initializeApp(
+          options: const FirebaseOptions(
+              apiKey: "AIzaSyBIl9tf3WkEvIKL9hqF__2rkZp0bVpFwco",
+              appId: "1:728404698408:android:b6d16f6c83be4a1cf0dc1d",
+              messagingSenderId: "728404698408",
+              projectId: "test-ba8a5",
+              storageBucket: "test-ba8a5.appspot.com"))
+      : await Firebase.initializeApp();
   Bloc.observer = MyBlocObserver();
   await CacheHealper.init();
 

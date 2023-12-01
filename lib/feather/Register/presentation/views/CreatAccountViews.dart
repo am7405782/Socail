@@ -30,6 +30,9 @@ class _CreatAccountViewsState extends State<CreatAccountViews> {
       create: (context) => CreatAccount(),
       child: BlocConsumer<CreatAccount, CratAccountState>(
         listener: (context, state) {
+          if (state is CreatLodingState) {
+            const Center(child: CircularProgressIndicator());
+          }
           if (state is CreatScafullState) {
             Navigator.of(context).pushNamed(HomeSocail.nameKey);
           }
@@ -169,6 +172,8 @@ class _CreatAccountViewsState extends State<CreatAccountViews> {
                             onTap: () {
                               if (formkey.currentState!.validate()) {
                                 CreatAccount.get(context).creatUser(
+                                    name: nameController.text,
+                                    phone: phoneController.text,
                                     email: emailController.text,
                                     password: passwoedController.text);
                               }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/core/Constant.dart';
+import 'package:flutter_application_2/feather/HomeSocail/presentation/views/HomeSocail.dart';
 import 'package:flutter_application_2/feather/Login/presentation/Mangments/LoginBloc.dart';
 import 'package:flutter_application_2/feather/Login/presentation/Mangments/LoginState.dart';
 import 'package:flutter_application_2/feather/Login/presentation/views/widgets/customButton.dart';
@@ -26,7 +28,18 @@ class _LoginState extends State<Login> {
     return BlocProvider(
       create: (context) => LoginBloc(),
       child: BlocConsumer<LoginBloc, LoginState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is LoadingLoginState) {
+            const Center(child: CircularProgressIndicator());
+          } else if (state is ScafullLoginState) {
+            Navigator.of(context).pushNamed(HomeSocail.nameKey);
+          } else if (state is ErorrLoginState) {
+            tost(
+              state: ToastStae.eror,
+              text: state.Error,
+            );
+          }
+        },
         builder: (context, state) {
           return Scaffold(
             body: SafeArea(
@@ -138,9 +151,9 @@ class _LoginState extends State<Login> {
                             height: 50,
                             onTap: () {
                               if (formkey.currentState!.validate()) {
-                                // LoginBloc.get(context).userLogin(
-                                //     email: emailController.text,
-                                //     password: passWordController.text);
+                                LoginBloc.get(context).signInWithemailpassword(
+                                    emailController.text,
+                                    passwordController.text);
                               }
                               // navigatTo(
                               //     navig: const HomeLayOut(), context: context);
