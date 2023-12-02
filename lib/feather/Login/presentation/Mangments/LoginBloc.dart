@@ -18,15 +18,6 @@ class LoginBloc extends Cubit<LoginState> {
     emit(ChangeIconSuffix());
   }
 
-  // void authStateChanges() {
-  //   FirebaseAuth.instance.authStateChanges().listen((User? user) {
-  //     if (user == null) {
-  //       print('User is currently signed out!');
-  //     } else {
-  //       print('User is signed in!');
-  //     }
-  //   });
-  // }
   void signInWithemailpassword(
     String email,
     String password,
@@ -36,8 +27,7 @@ class LoginBloc extends Cubit<LoginState> {
       FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password)
           .then((value) {
-        print(value.user?.email);
-        emit(ScafullLoginState());
+        emit(ScafullLoginState(value.user!.uid));
       }).catchError((eror) {
         emit(ErorrLoginState(eror));
       });

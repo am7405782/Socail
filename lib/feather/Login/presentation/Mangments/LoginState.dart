@@ -6,7 +6,10 @@ class InitalState extends LoginState {}
 
 class LoadingLoginState extends LoginState {}
 
-class ScafullLoginState extends LoginState {}
+class ScafullLoginState extends LoginState {
+  final String uid;
+  ScafullLoginState(this.uid);
+}
 
 class ErorrLoginState extends LoginState {
   final Error;

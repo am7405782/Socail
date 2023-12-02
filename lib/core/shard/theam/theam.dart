@@ -27,28 +27,24 @@ ThemeData darkTheam = ThemeData(
 );
 
 ThemeData lightTheam = ThemeData(
-    // primarySwatch: Colors.blue,
-    // scaffoldBackgroundColor: Colors.white,
-    // appBarTheme: const AppBarTheme(
-    //   titleSpacing: 20,
-    //   systemOverlayStyle: SystemUiOverlayStyle(
-    //       statusBarColor: Colors.white,
-    //       statusBarIconBrightness: Brightness.dark),
-    //   backgroundColor: Colors.white,
-    //   elevation: 0,
-    //   titleTextStyle: TextStyle(
-    //     color: Colors.black,
-    //     fontSize: 20,
-    //     fontWeight: FontWeight.bold,
-    //   ),
-    //   iconTheme: IconThemeData(
-    //     color: Colors.black,
-    //   ),
-    // ),
-    // bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    //   type: BottomNavigationBarType.fixed,
-    //   selectedItemColor: Colors.blue,
-    //   elevation: 20,
-    //   backgroundColor: Colors.white,
-    // )
-    );
+    primarySwatch: Colors.blue,
+    scaffoldBackgroundColor: Colors.white,
+    appBarTheme: const AppBarTheme(
+      titleSpacing: 20,
+      backgroundColor: Colors.white,
+      elevation: 0,
+      titleTextStyle: TextStyle(
+        color: Colors.black,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+      iconTheme: IconThemeData(
+        color: Colors.black,
+      ),
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: Colors.blue,
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+    ));

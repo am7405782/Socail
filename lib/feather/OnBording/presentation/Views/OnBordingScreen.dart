@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/core/shard/Local/Shardprfrence.dart';
 import 'package:flutter_application_2/feather/Login/presentation/views/LoginViews.dart';
 import 'package:flutter_application_2/feather/OnBording/presentation/Views/widgets/foranimation.dart';
 
@@ -52,6 +53,7 @@ class _FurnitureExampleState extends State<OnBordingView>
         curve: Curves.easeInOut,
       );
     } else if (_currentIndex == _furniture.length - 1) {
+      CacheHealper.SavedData(key: "onBoarding", value: false);
       _finshPage();
     }
   }
@@ -59,7 +61,7 @@ class _FurnitureExampleState extends State<OnBordingView>
   void _finshPage() {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (context) => const Login(),
+          builder: (context) => Login(),
         ),
         (route) => false);
   }

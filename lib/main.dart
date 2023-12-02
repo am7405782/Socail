@@ -1,15 +1,20 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/shard/Blocopserved.dart';
 import 'package:flutter_application_2/core/shard/Local/Shardprfrence.dart';
+import 'package:flutter_application_2/core/shard/theam/theam.dart';
+import 'package:flutter_application_2/feather/HomeSocail/presentation/Mangments/SocialBloc.dart';
 import 'package:flutter_application_2/feather/HomeSocail/presentation/views/HomeSocail.dart';
+import 'package:flutter_application_2/feather/HomeSocail/presentation/views/widgets/addPost/NewPost.dart';
 import 'package:flutter_application_2/feather/Login/presentation/views/LoginViews.dart';
 import 'package:flutter_application_2/feather/OnBording/presentation/Views/OnBordingScreen.dart';
 import 'package:flutter_application_2/feather/Register/presentation/views/CreatAccountViews.dart';
 import 'package:flutter_application_2/feather/Splash/presentation/views/splash_view.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,21 +33,47 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        print('User is currently signed out!');
+      } else {
+        print('User is signed in!');
+      }
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: SplashView.nameKey,
-      routes: {
-        SplashView.nameKey: (_) => const SplashView(),
-        OnBordingView.nameKey: (_) => const OnBordingView(),
-        Login.nameKey: (_) => const OnBordingView(),
-        HomeSocail.nameKey: (_) => const HomeSocail(),
-        CreatAccountViews.nameKey: (_) => const CreatAccountViews(),
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => SocailBloc()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: lightTheam,
+        initialRoute: FirebaseAuth.instance.currentUser == null
+            ? SplashView.nameKey
+            : HomeSocail.nameKey,
+        routes: {
+          SplashView.nameKey: (_) => const SplashView(),
+          OnBordingView.nameKey: (_) => const OnBordingView(),
+          Login.nameKey: (_) => Login(),
+          HomeSocail.nameKey: (_) => const HomeSocail(),
+          CreatAccountViews.nameKey: (_) => CreatAccountViews(),
+          NewPost.nameKey: (_) => const NewPost(),
+        },
+      ),
     );
   }
 }

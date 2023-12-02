@@ -3,24 +3,22 @@ import 'package:flutter_application_2/core/Constant.dart';
 import 'package:flutter_application_2/feather/HomeSocail/presentation/views/HomeSocail.dart';
 import 'package:flutter_application_2/feather/Login/presentation/Mangments/LoginBloc.dart';
 import 'package:flutter_application_2/feather/Login/presentation/Mangments/LoginState.dart';
-import 'package:flutter_application_2/feather/Login/presentation/views/widgets/customButton.dart';
-import 'package:flutter_application_2/feather/Login/presentation/views/widgets/textFaildLogin.dart';
-import 'package:flutter_application_2/feather/Register/presentation/views/CreatAccountViews.dart';
+import 'package:flutter_application_2/feather/Login/presentation/views/widgets/LoginBody.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class Login extends StatefulWidget {
+// ignore: must_be_immutable
+class Login extends StatelessWidget {
   static const String nameKey = "Login";
 
-  const Login({super.key});
-
-  @override
-  State<Login> createState() => _LoginState();
-}
-
-class _LoginState extends State<Login> {
   var formkey = GlobalKey<FormState>();
+
   var emailController = TextEditingController();
+
   var passwordController = TextEditingController();
+
+  Login({super.key});
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -32,7 +30,9 @@ class _LoginState extends State<Login> {
           if (state is LoadingLoginState) {
             const Center(child: CircularProgressIndicator());
           } else if (state is ScafullLoginState) {
-            Navigator.of(context).pushNamed(HomeSocail.nameKey);
+            //  CacheHealper.SavedData(key: "uid", value: state.uid);
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil(HomeSocail.nameKey, (route) => false);
           } else if (state is ErorrLoginState) {
             tost(
               state: ToastStae.eror,
@@ -41,148 +41,11 @@ class _LoginState extends State<Login> {
           }
         },
         builder: (context, state) {
-          return Scaffold(
-            body: SafeArea(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomRight,
-                      colors: [
-                        Colors.black.withOpacity(0.9),
-                        Colors.black.withOpacity(0.8),
-                        Colors.black.withOpacity(0.2),
-                        Colors.black.withOpacity(0.1),
-                      ],
-                    ),
-                  ),
-                  child: Form(
-                    key: formkey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: size.height * 0.022,
-                        ),
-                        const Center(
-                          child: Text(
-                            "Socail ",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontSize: 42,
-                              height: 1,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: size.height * 0.22,
-                        ),
-                        const Text(
-                          "Login",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 42,
-                            height: 1,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(
-                          height: size.height * 0.022,
-                        ),
-                        const Text(
-                          "ConncationWitheFrinds",
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(
-                          height: size.height * 0.022,
-                        ),
-                        textFaildLogin(
-                          onPressedicon: () {},
-                          name: "Email",
-                          prefixIcon: Icons.email_outlined,
-                          controller: emailController,
-                          hintText: "...@_.com",
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (value) {},
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Pleas enter email';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(
-                          height: size.height * 0.022,
-                        ),
-                        textFaildLogin(
-                          onPressedicon: () {
-                            LoginBloc.get(context).changepassWord();
-                          },
-                          obscureText: LoginBloc.get(context).obscureText,
-                          name: "Password",
-                          prefixIcon: Icons.lock_outline,
-                          controller: passwordController,
-                          hintText: "***",
-                          suffixIcon: LoginBloc.get(context).icon,
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (value) {},
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Pleas enter password';
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(
-                          height: size.height * 0.022,
-                        ),
-                        customButton(
-                            text: "LOGIN",
-                            height: 50,
-                            onTap: () {
-                              if (formkey.currentState!.validate()) {
-                                LoginBloc.get(context).signInWithemailpassword(
-                                    emailController.text,
-                                    passwordController.text);
-                              }
-                              // navigatTo(
-                              //     navig: const HomeLayOut(), context: context);
-                            }),
-                        SizedBox(
-                          height: size.height * 0.03,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                CreatAccountViews.nameKey, (route) => false);
-                          },
-                          child: const Center(
-                            child: Text(
-                              "CreatAccount...!!",
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
+          return LoginBody(
+              formkey: formkey,
+              size: size,
+              emailController: emailController,
+              passwordController: passwordController);
         },
       ),
     );
