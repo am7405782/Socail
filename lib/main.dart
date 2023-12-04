@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => SocailBloc()),
+        BlocProvider(create: (context) => SocailBloc()..getUserData()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/Constant.dart';
+import 'package:flutter_application_2/core/shard/Local/Shardprfrence.dart';
 import 'package:flutter_application_2/feather/HomeSocail/presentation/views/HomeSocail.dart';
 import 'package:flutter_application_2/feather/Login/presentation/Mangments/LoginBloc.dart';
 import 'package:flutter_application_2/feather/Login/presentation/Mangments/LoginState.dart';
@@ -30,7 +31,8 @@ class Login extends StatelessWidget {
           if (state is LoadingLoginState) {
             const Center(child: CircularProgressIndicator());
           } else if (state is ScafullLoginState) {
-            //  CacheHealper.SavedData(key: "uid", value: state.uid);
+            CacheHealper.SavedData(key: "uid", value: state.uid);
+
             Navigator.of(context)
                 .pushNamedAndRemoveUntil(HomeSocail.nameKey, (route) => false);
           } else if (state is ErorrLoginState) {
