@@ -14,7 +14,9 @@ class ListViewPostItemsBody extends StatelessWidget {
     return ListView.separated(
         physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        itemBuilder: (context, index) => Postitems(size: size),
+        itemBuilder: (context, index) => Postitems(
+              size: size,
+            ),
         separatorBuilder: (context, index) => const SizedBox(
               height: 5,
             ),

@@ -179,7 +179,7 @@ class SettingScreen extends StatelessWidget {
                           onPressed: () {
                             navigatTo(
                               context: context,
-                              navig: const EditProfail(),
+                              navig: EditProfail(),
                             );
                           },
                           child: const Icon(

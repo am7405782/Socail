@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/Model/SocailModel.dart';
 import 'package:flutter_application_2/core/Model/postModel.dart';
@@ -17,6 +18,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 class SocailBloc extends Cubit<SocailState> {
   SocailBloc() : super(InitalState());
   static SocailBloc get(context) => BlocProvider.of(context);
+  void singnout() async {
+    await FirebaseAuth.instance.signOut();
+    emit(SingnOutState());
+  }
 
   int currentindex = 0;
   List<String> title = [
@@ -117,18 +122,18 @@ class SocailBloc extends Cubit<SocailState> {
   }
 
   void uploadCoverImage({
-    @required String? name,
-    @required String? phone,
-    @required String? bio,
+    required String? name,
+    required String? phone,
+    required String? bio,
   }) {
-    emit(LodingUploadImageProfailState());
+    emit(LodingUploadcoverProfailState());
     FirebaseStorage.instance
         .ref()
         .child("user/${Uri.file(cover!.path).pathSegments.last}")
         .putFile(cover!)
         .then((value) {
       value.ref.getDownloadURL().then((value) {
-        emit(ScafullUploadImageProfailState());
+        emit(ScafullUploadcoverProfailState());
         print(value);
         udateUserData(
           name: name!,
@@ -137,10 +142,10 @@ class SocailBloc extends Cubit<SocailState> {
           cover: value,
         );
       }).catchError((e) {
-        emit(ErrorUploadImageProfailState());
+        emit(ErrorUploadcoverProfailState());
       });
     }).catchError((e) {
-      emit(ErrorUploadImageProfailState());
+      emit(ErrorUploadcoverProfailState());
     });
   }
 
@@ -174,14 +179,18 @@ class SocailBloc extends Cubit<SocailState> {
     });
   }
 
-  File? postimage;
+  File? imagepost;
+  void removeImgePOst() {
+    imagepost == File('');
+    emit(RemovepostImage());
+  }
 
-  Future<void> getpostProfail() async {
+  Future<void> getpostimage() async {
     emit(LodinggetPostImageState());
 
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      postimage = File(pickedFile.path);
+      imagepost = File(pickedFile.path);
 
       emit(ScafullgetPostImageState());
     } else {
@@ -193,13 +202,13 @@ class SocailBloc extends Cubit<SocailState> {
   void uploadpostImageImage({
     required String text,
     required String date,
-    required String? postImage,
+    required String postImage,
   }) {
     emit(LodingUploadPostImageState());
     FirebaseStorage.instance
         .ref()
-        .child("user/${Uri.file(postimage!.path).pathSegments.last}")
-        .putFile(postimage!)
+        .child("user/${Uri.file(imagepost!.path).pathSegments.last}")
+        .putFile(imagepost!)
         .then((value) {
       value.ref.getDownloadURL().then((value) {
         creatPost(
@@ -237,6 +246,21 @@ class SocailBloc extends Cubit<SocailState> {
       emit(ScafullCreatPoststate());
     }).catchError((eror) {
       emit(ErorrCreatPostState());
+    });
+  }
+
+  List<PostModel> posts = [];
+
+  void getPost() {
+    emit(LodingGetPostState());
+    FirebaseFirestore.instance.collection("post").get().then((value) {
+      value.docs.forEach((element) {
+        posts.add(PostModel.fromJson(element.data()));
+      });
+      emit(ScafullGetPostState());
+    }).catchError((e) {
+      emit(ErrorGetPostState());
+      print(e.toString());
     });
   }
 }

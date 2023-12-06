@@ -1,26 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/feather/HomeSocail/presentation/Mangments/SocailState.dart';
 import 'package:flutter_application_2/feather/HomeSocail/presentation/Mangments/SocialBloc.dart';
+import 'package:flutter_application_2/feather/Login/presentation/views/widgets/customButton.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NewPost extends StatelessWidget {
   static const String nameKey = "NewPost";
-
   const NewPost({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var textController = TextEditingController();
-    var size = MediaQuery.of(context).size;
-    var bloc = SocailBloc.get(context);
-    var date = DateTime.now();
-    var ImgePost = SocailBloc.get(context).postimage;
+    var textControll = TextEditingController();
+    DateTime time = DateTime.now();
     return BlocConsumer<SocailBloc, SocailState>(
-      listener: (context, state) {
-        if (state is ScafullCreatPoststate) {
-          Navigator.pop(context);
-        }
-      },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
@@ -32,141 +24,131 @@ class NewPost extends StatelessWidget {
                 Icons.arrow_back_ios_new_outlined,
               ),
             ),
-            title: const Text(
-              "NewPost",
-            ),
+            titleSpacing: 5,
+            title: const Text("New Post "),
             actions: [
-              TextButton(
+              MaterialButton(
                 onPressed: () {
-                  if (bloc.postimage == null) {
-                    bloc.creatPost(
-                      text: textController.text,
-                      datetime: date.toString(),
+                  if (SocailBloc.get(context).imagepost == null) {
+                    SocailBloc.get(context).creatPost(
+                      text: textControll.text,
+                      datetime: time.toString(),
                     );
                   } else {
-                    bloc.uploadpostImageImage(
-                      date: date.toString(),
-                      text: textController.text,
+                    SocailBloc.get(context).uploadpostImageImage(
+                      date: time.toString(),
+                      text: textControll.text,
                       postImage: "",
                     );
                   }
                 },
                 child: const Text(
                   "post",
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(color: Colors.blue, fontSize: 18),
                 ),
               ),
               const SizedBox(
-                width: 3,
+                width: 5,
               ),
             ],
           ),
           body: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding:
+                const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 5),
             child: Column(
               children: [
+                // if (state is SocailCreatPostLodiingState)
+                // const LinearProgressIndicator(),
                 Row(
                   children: [
                     CircleAvatar(
+                      radius: 24,
                       backgroundImage: NetworkImage(
-                        "${bloc.usermodel?.image}",
-                      ),
-                      radius: 25,
+                          "${SocailBloc.get(context).usermodel?.image}"),
                     ),
                     const SizedBox(
-                      width: 10,
+                      width: 15,
                     ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                "${bloc.usermodel?.name}",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 3,
-                              ),
-                              const CircleAvatar(
-                                radius: 8,
-                                child: Icon(
-                                  Icons.done_rounded,
-                                  size: 15,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 3,
-                          ),
-                          Text(
-                            "${date}",
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.grey),
-                          ),
-                        ],
+                    Text(
+                      "${SocailBloc.get(context).usermodel?.name}",
+                      style: const TextStyle(
+                        height: 1.4,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
+                const SizedBox(
+                  height: 5,
+                ),
                 Expanded(
-                  child: TextField(
-                    controller: textController,
-                    cursorColor: Colors.grey,
+                  child: TextFormField(
+                    controller: textControll,
                     decoration: const InputDecoration(
-                      hintText: "What is Your mind...",
+                      hintText: "  what is your mined.....",
                       border: InputBorder.none,
                     ),
                   ),
                 ),
-                if (bloc.postimage != null)
-                  Container(
-                    height: size.height * 0.25,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: FileImage(bloc.postimage!),
-                        fit: BoxFit.cover,
-                      ),
+                if (SocailBloc.get(context).imagepost != null)
+                  Expanded(
+                    child: Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            image: DecorationImage(
+                                image: FileImage(
+                                    SocailBloc.get(context).imagepost!),
+                                fit: BoxFit.cover),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            SocailBloc.get(context).removeImgePOst();
+                          },
+                          icon: const CircleAvatar(
+                            child: Icon(
+                              Icons.close_rounded,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                SizedBox(
-                  height: size.height * 0.05,
-                ),
+                const Divider(height: 20, thickness: 0.5, color: Colors.grey),
                 Row(
                   children: [
                     Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          SocailBloc.get(context).getpostProfail();
-                        },
-                        child: const Text(
-                          "AddPhoto",
-                        ),
-                      ),
+                      child: customButton(
+                          text: "AddPhoto",
+                          height: 30,
+                          onTap: () {
+                            SocailBloc.get(context).getpostimage();
+                          }),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       width: 5,
                     ),
                     Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        child: const Text(
-                          "AddTag#",
-                        ),
-                      ),
-                    ),
+                        child: customButton(
+                            text: "#tag", height: 30, onTap: () {}))
                   ],
                 ),
               ],
             ),
           ),
         );
+      },
+      listener: (context, state) {
+        if (state is RemovepostImage) {
+          SocailBloc.get(context).imagepost = null;
+        } else if (state is ScafullCreatPoststate) {
+          Navigator.pop(context);
+        }
       },
     );
   }

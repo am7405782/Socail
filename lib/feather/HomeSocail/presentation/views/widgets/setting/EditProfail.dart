@@ -4,22 +4,26 @@ import 'package:flutter_application_2/feather/HomeSocail/presentation/Mangments/
 import 'package:flutter_application_2/feather/Login/presentation/views/widgets/customButton.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class EditProfail extends StatelessWidget {
+class EditProfail extends StatefulWidget {
   const EditProfail({super.key});
+
+  @override
+  State<EditProfail> createState() => _EditProfailState();
+}
+
+class _EditProfailState extends State<EditProfail> {
+  TextEditingController nameController = TextEditingController();
+
+  TextEditingController bioController = TextEditingController();
+
+  TextEditingController phoneController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    var model = SocailBloc.get(context).usermodel;
-    var nameController = TextEditingController();
-    var bioController = TextEditingController();
-    var phoneController = TextEditingController();
-    nameController.text = "${model?.name}";
-    phoneController.text = "${model?.phone}";
-    bioController.text = "${model?.bio}";
     return BlocConsumer<SocailBloc, SocailState>(
       listener: (context, state) {
-        if (state is UdateUserDataScafull) {
+        if (state is UdateUserDataLoding) {
           const CircularProgressIndicator();
         }
       },
@@ -27,6 +31,9 @@ class EditProfail extends StatelessWidget {
         var usermodel = SocailBloc.get(context).usermodel;
         var imageProfail = SocailBloc.get(context).image;
         var imagecover = SocailBloc.get(context).cover;
+        nameController.text = "${usermodel?.name}";
+        phoneController.text = "${usermodel?.phone}";
+        bioController.text = "${usermodel?.bio}";
 
         return Scaffold(
           appBar: AppBar(
@@ -87,7 +94,7 @@ class EditProfail extends StatelessWidget {
                                     fit: BoxFit.cover)
                                 : DecorationImage(
                                     image: FileImage(imagecover),
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.cover,
                                   ),
                           ),
                         ),
@@ -126,32 +133,50 @@ class EditProfail extends StatelessWidget {
                     children: [
                       if (SocailBloc.get(context).image != null)
                         Expanded(
-                          child: customButton(
-                              text: "image",
-                              height: 40,
-                              onTap: () {
-                                SocailBloc.get(context).uploadprofialImage(
-                                  name: nameController.text,
-                                  phone: phoneController.text,
-                                  bio: bioController.text,
-                                );
-                              }),
+                          child: Column(
+                            children: [
+                              customButton(
+                                  text: "image",
+                                  height: 40,
+                                  onTap: () {
+                                    SocailBloc.get(context).uploadprofialImage(
+                                      name: nameController.text,
+                                      phone: phoneController.text,
+                                      bio: bioController.text,
+                                    );
+                                  }),
+                              const SizedBox(
+                                width: 2,
+                              ),
+                              if (state is LodingUploadImageProfailState)
+                                const LinearProgressIndicator(),
+                            ],
+                          ),
                         ),
                       const SizedBox(
                         width: 5,
                       ),
                       if (SocailBloc.get(context).cover != null)
                         Expanded(
-                          child: customButton(
-                              text: "cover",
-                              height: 40,
-                              onTap: () {
-                                SocailBloc.get(context).uploadCoverImage(
-                                  name: nameController.text,
-                                  phone: phoneController.text,
-                                  bio: bioController.text,
-                                );
-                              }),
+                          child: Column(
+                            children: [
+                              customButton(
+                                  text: "cover",
+                                  height: 40,
+                                  onTap: () {
+                                    SocailBloc.get(context).uploadCoverImage(
+                                      name: nameController.text,
+                                      phone: phoneController.text,
+                                      bio: bioController.text,
+                                    );
+                                  }),
+                              const SizedBox(
+                                width: 2,
+                              ),
+                              if (state is LodingUploadcoverProfailState)
+                                const LinearProgressIndicator(),
+                            ],
+                          ),
                         ),
                     ],
                   ),
@@ -159,6 +184,16 @@ class EditProfail extends StatelessWidget {
                   height: 20,
                 ),
                 TextFormField(
+                  onSaved: (value) {
+                    nameController.text == value;
+                  },
+                  textCapitalization: TextCapitalization.sentences,
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Pleas enter name';
+                    }
+                    return null;
+                  },
                   controller: nameController,
                   decoration: InputDecoration(
                     fillColor: Colors.grey,
@@ -179,24 +214,28 @@ class EditProfail extends StatelessWidget {
                 ),
                 TextFormField(
                   controller: bioController,
+                  textCapitalization: TextCapitalization.sentences,
+                  keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    fillColor: Colors.grey,
-                    prefixIcon: const Icon(
-                      Icons.menu,
-                    ),
                     hintText: "${usermodel?.bio}",
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Colors.blue,
-                      ),
-                    ),
+                        borderRadius: BorderRadius.circular(10)),
+                    prefixIcon: const Icon(Icons.notes_outlined),
                   ),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Pleas enter bio';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 TextFormField(
+                  onFieldSubmitted: (value) {
+                    bioController.text == value;
+                  },
                   controller: phoneController,
                   decoration: InputDecoration(
                     fillColor: Colors.grey,
@@ -212,6 +251,15 @@ class EditProfail extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(
+                  height: 20,
+                ),
+                customButton(
+                    text: "SignOut",
+                    height: 40,
+                    onTap: () {
+                      SocailBloc.get(context).singnout();
+                    }),
                 SizedBox(
                   height: MediaQuery.of(context).viewInsets.bottom,
                 ),

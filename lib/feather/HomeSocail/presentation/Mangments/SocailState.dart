@@ -66,3 +66,13 @@ class LodingCreatPostState extends SocailState {}
 class ScafullCreatPoststate extends SocailState {}
 
 class ErorrCreatPostState extends SocailState {}
+
+class LodingGetPostState extends SocailState {}
+
+class ScafullGetPostState extends SocailState {}
+
+class ErrorGetPostState extends SocailState {}
+
+class RemovepostImage extends SocailState {}
+
+class SingnOutState extends SocailState {}

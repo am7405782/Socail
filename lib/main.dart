@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/shard/Blocopserved.dart';
@@ -57,7 +56,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => SocailBloc()..getUserData()),
+        BlocProvider(
+            create: (context) => SocailBloc()
+              ..getUserData()
+              ..getPost()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -71,7 +73,7 @@ class _MyAppState extends State<MyApp> {
           Login.nameKey: (_) => Login(),
           HomeSocail.nameKey: (_) => const HomeSocail(),
           CreatAccountViews.nameKey: (_) => CreatAccountViews(),
-          NewPost.nameKey: (_) => const NewPost(),
+          NewPost.nameKey: (_) => NewPost(),
         },
       ),
     );
