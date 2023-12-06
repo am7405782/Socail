@@ -57,8 +57,8 @@ class NewPost extends StatelessWidget {
                 const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 5),
             child: Column(
               children: [
-                // if (state is SocailCreatPostLodiingState)
-                // const LinearProgressIndicator(),
+                if (state is LodingCreatPostState)
+                  const LinearProgressIndicator(),
                 Row(
                   children: [
                     CircleAvatar(

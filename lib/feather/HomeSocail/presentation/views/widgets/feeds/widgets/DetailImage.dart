@@ -1,73 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_application_2/core/Model/postModel.dart';
 
-class DetailImage extends StatelessWidget {
-  const DetailImage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('NameImage'),
-      ),
-      body: Column(
+Scaffold deatilsphoto(PostModel? post, BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(
+            Icons.arrow_back_ios_new_outlined,
+          )),
+      title: Row(
         children: [
+          CircleAvatar(
+            backgroundImage: NetworkImage(
+              "${post?.image}",
+            ),
+          ),
           SizedBox(
-            height: 30,
+            width: 5,
           ),
-          const Center(
-            child: Hero(
-              tag: 'NameImage',
-              key: ValueKey('hero-tag'),
-              child: Image(
-                image: AssetImage(
-                  "assets/images/one.jpg",
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Row(
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          FontAwesomeIcons.heart,
-                          color: Colors.red,
-                        )),
-                    const Text(
-                      "75",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                const Row(
-                  children: [
-                    Text(
-                      "75",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                    SizedBox(
-                      width: 3,
-                    ),
-                    Text(
-                      "comments",
-                      style: TextStyle(color: Colors.black38),
-                    ),
-                    SizedBox(
-                      width: 3,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          Text("${post?.name}"),
         ],
       ),
-    );
-  }
+    ),
+    body: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 1,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(
+              "${post?.postImage}",
+            ),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    ),
+  );
 }
