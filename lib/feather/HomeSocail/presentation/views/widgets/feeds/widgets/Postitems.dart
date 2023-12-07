@@ -80,7 +80,7 @@ Card buildPostItems(
             ),
           ),
         ),
-        if (post?.postImage != null)
+        if (post?.postImage != "")
           InkWell(
             onTap: () {
               Navigator.push(

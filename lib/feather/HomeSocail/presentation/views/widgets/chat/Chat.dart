@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/feather/HomeSocail/presentation/views/widgets/chat/Widget/ChatDeatiles.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -6,83 +8,65 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(children: [
-        WhatsYourMindWidget(),
-      ]),
-    );
-  }
-}
-
-class WhatsYourMindWidget extends StatefulWidget {
-  @override
-  _WhatsYourMindWidgetState createState() => _WhatsYourMindWidgetState();
-}
-
-class _WhatsYourMindWidgetState extends State<WhatsYourMindWidget> {
-  final TextEditingController _textEditingController = TextEditingController();
-
-  @override
-  void dispose() {
-    _textEditingController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Card(
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    // Your profile picture or icon
-                    radius: 20,
-                    // Example placeholder color
-                    backgroundColor: Colors.grey,
+      body: ListView.separated(
+        physics: const BouncingScrollPhysics(),
+        itemBuilder: (context, index) => InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChatDeatiles(),
+                ));
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  backgroundImage: AssetImage(
+                    "assets/images/one.jpg",
                   ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _textEditingController,
-                      decoration: InputDecoration(
-                        hintText: "What's on your mind?",
-                        border: InputBorder.none,
+                  radius: 25,
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "AhmedMohmed",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
                       ),
-                      maxLines: null, // Allows multiple lines
                     ),
-                  ),
-                ],
-              ),
-              Divider(height: 20, thickness: 0.5, color: Colors.grey),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // Additional buttons or icons can be added here
-                  IconButton(
-                    onPressed: () {
-                      // Add functionality for this button
-                    },
-                    icon: Icon(Icons.photo),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      // Add functionality for this button
-                    },
-                    icon: Icon(Icons.video_camera_back),
-                  ),
-                ],
-              ),
-            ],
+                    SizedBox(
+                      height: 2,
+                    ),
+                    Text(
+                      "Hello Ahmed",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.withOpacity(0.9),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                const Text(
+                  "12:15",
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
           ),
         ),
+        separatorBuilder: (context, index) =>
+            const Divider(height: 20, thickness: 0.5, color: Colors.grey),
+        itemCount: 3,
       ),
     );
   }
