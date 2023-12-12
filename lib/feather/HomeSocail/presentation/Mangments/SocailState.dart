@@ -76,3 +76,41 @@ class ErrorGetPostState extends SocailState {}
 class RemovepostImage extends SocailState {}
 
 class SingnOutState extends SocailState {}
+
+////////////////////////////////////////////////////////////////////////////////////
+class LodingGetUserDataChat extends SocailState {}
+
+class ScafullGetUserDataChat extends SocailState {}
+
+class EroorGetUserDataChat extends SocailState {}
+
+///////////////////////////////////////
+class LodingLikeState extends SocailState {}
+
+class ScafullLikeState extends SocailState {}
+
+class ErrorLikeState extends SocailState {}
+
+class ScafullSendMessageState extends SocailState {}
+
+class ErrorSendMessageState extends SocailState {}
+
+class GetMessageScafull extends SocailState {}
+
+class LodinggetChatimageState extends SocailState {}
+
+class ScafulltChatimageState extends SocailState {}
+
+class ErrorChatimageState extends SocailState {}
+
+class LodingUploadChatImageState extends SocailState {}
+
+class ScafullUploadChatImageState extends SocailState {}
+
+class ErorrUploadChatImageState extends SocailState {}
+
+class LodingSendCommentState extends SocailState {}
+
+class ScafullSendCommentState extends SocailState {}
+
+class ErrorSendCommentState extends SocailState {}

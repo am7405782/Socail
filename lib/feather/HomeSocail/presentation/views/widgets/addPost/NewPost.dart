@@ -41,6 +41,7 @@ class NewPost extends StatelessWidget {
                       postImage: "",
                     );
                   }
+                  SocailBloc.get(context).posts.clear();
                 },
                 child: const Text(
                   "post",

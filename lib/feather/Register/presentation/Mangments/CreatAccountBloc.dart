@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/Model/SocailModel.dart';
-import 'package:flutter_application_2/core/shard/Local/Shardprfrence.dart';
 import 'package:flutter_application_2/feather/Register/presentation/Mangments/CreatAcountState.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -68,7 +67,6 @@ class CreatAccount extends Cubit<CratAccountState> {
         .doc(uid)
         .set(model.toMap())
         .then((value) {
-      CacheHealper.SavedData(key: "id", value: uid);
       print(uid);
       emit(SaveDataFireStoreScafull());
     }).catchError((eror) {

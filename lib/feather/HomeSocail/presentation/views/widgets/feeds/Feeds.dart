@@ -15,7 +15,8 @@ class Feeds extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) {
         return ConditionalBuilder(
-          condition: SocailBloc.get(context).posts.isNotEmpty,
+          condition: SocailBloc.get(context).posts.isNotEmpty &&
+              SocailBloc.get(context).usermodel != null,
           builder: (context) => SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Feedisbody(

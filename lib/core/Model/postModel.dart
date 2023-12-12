@@ -1,6 +1,5 @@
 class PostModel {
   String? name;
-
   String? uId;
   String? image;
   String? postImage;

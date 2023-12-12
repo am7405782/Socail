@@ -28,6 +28,8 @@ void main() async {
       : await Firebase.initializeApp();
   Bloc.observer = MyBlocObserver();
   await CacheHealper.init();
+  var uid = CacheHealper.getData(key: "uid");
+  print(uid);
 
   runApp(const MyApp());
 }

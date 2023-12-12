@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/Model/postModel.dart';
+import 'package:flutter_application_2/feather/HomeSocail/presentation/Mangments/SocialBloc.dart';
+import 'package:flutter_application_2/feather/HomeSocail/presentation/views/widgets/feeds/widgets/Comment.dart';
 import 'package:flutter_application_2/feather/HomeSocail/presentation/views/widgets/feeds/widgets/DetailImage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-Card buildPostItems(
-  PostModel? post,
-  BuildContext context,
-) {
+Card buildPostItems(PostModel? post, BuildContext context, index) {
   var size = MediaQuery.of(context).size;
   return Card(
     clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -111,13 +110,13 @@ Card buildPostItems(
                 children: [
                   IconButton(
                       onPressed: () {},
-                      icon: const Icon(
-                        FontAwesomeIcons.heart,
-                        color: Colors.red,
+                      icon: Icon(
+                        SocailBloc.get(context).icon,
+                        color: Colors.grey,
                       )),
-                  const Text(
-                    "75",
-                    style: TextStyle(color: Colors.black54),
+                  Text(
+                    "${SocailBloc.get(context).Liks[index]}",
+                    style: const TextStyle(color: Colors.black54),
                   ),
                 ],
               ),
@@ -125,7 +124,7 @@ Card buildPostItems(
               const Row(
                 children: [
                   Text(
-                    "75",
+                    "0",
                     style: TextStyle(color: Colors.black54),
                   ),
                   SizedBox(
@@ -150,10 +149,20 @@ Card buildPostItems(
         ),
         Row(
           children: [
+            Expanded(
+              child: WriteComment(
+                size: size,
+                post: post!,
+                index: index,
+              ),
+            ),
             Row(
               children: [
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      SocailBloc.get(context)
+                          .Like(SocailBloc.get(context).postId[index]);
+                    },
                     icon: const Icon(
                       FontAwesomeIcons.heart,
                       color: Colors.red,
@@ -162,38 +171,66 @@ Card buildPostItems(
                   "Like",
                   style: TextStyle(color: Colors.black54),
                 ),
-              ],
-            ),
-            Expanded(
-              child: Container(
-                height: size.height * 0.039,
-                decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(50)),
-                margin: const EdgeInsets.only(left: 15, right: 15),
-                child: const Row(
-                  children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Icon(
-                      FontAwesomeIcons.comments,
-                      color: Colors.black26,
-                    ),
-                    SizedBox(
-                      width: 30,
-                    ),
-                    Text(
-                      "Write Comment",
-                      style: TextStyle(color: Colors.black45),
-                    ),
-                  ],
+                SizedBox(
+                  width: 5,
                 ),
-              ),
+              ],
             ),
           ],
         ),
       ],
     ),
   );
+}
+
+class WriteComment extends StatelessWidget {
+  const WriteComment({
+    super.key,
+    required this.size,
+    required this.post,
+    required this.index,
+  });
+
+  final Size size;
+  final PostModel post;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Comment(
+                post: post,
+                index: index,
+              ),
+            ));
+      },
+      child: Container(
+        height: size.height * 0.039,
+        decoration: BoxDecoration(
+            color: Colors.grey.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(50)),
+        margin: const EdgeInsets.only(left: 15, right: 15),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundImage:
+                  NetworkImage("${SocailBloc.get(context).usermodel?.image}"),
+              radius: 20,
+            ),
+            const SizedBox(
+              width: 30,
+            ),
+            const Text(
+              "Write Comment",
+              style: TextStyle(color: Colors.black45),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

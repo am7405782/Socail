@@ -18,6 +18,7 @@ class ListViewFeeds extends StatelessWidget {
         itemBuilder: (context, index) => buildPostItems(
               SocailBloc.get(context).posts[index],
               context,
+              index,
             ),
         separatorBuilder: (context, index) => const SizedBox(
               height: 5,
