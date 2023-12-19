@@ -1,3 +1,5 @@
+// ignore_for_file: body_might_complete_normally_catch_error
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,6 +46,9 @@ class SocailBloc extends Cubit<SocailState> {
   void changeBootomSheet(int index) {
     if (index == 1) {
       getAllUser();
+    } else if (index == 3) {
+      poto.clear();
+      getphoto();
     }
     currentindex = index;
     emit(ChangeBottonSheet());
@@ -186,6 +191,7 @@ class SocailBloc extends Cubit<SocailState> {
   }
 
   File? imagepost;
+
   void removeImgePOst() {
     imagepost == File('');
     emit(RemovepostImage());
@@ -249,6 +255,8 @@ class SocailBloc extends Cubit<SocailState> {
         .collection("post")
         .add(postModel.toMap())
         .then((value) {
+      print(value.id);
+      getPost();
       emit(ScafullCreatPoststate());
     }).catchError((eror) {
       emit(ErorrCreatPostState());
@@ -257,74 +265,35 @@ class SocailBloc extends Cubit<SocailState> {
 
   List<PostModel> posts = [];
   List<String> postId = [];
-  List<int> Liks = [];
-  List<int> Commments = [];
+  List<int> likes = [];
 
-  // void getPost() {
-  //   emit(LodingGetPostState());
-  //   FirebaseFirestore.instance
-  //       .collection("post")
-  //       .orderBy("dateTime")
-  //       .get()
-  //       .then((value) {
-  //     value.docs.forEach((element) {
-  //       element.reference.collection("like").snapshots().listen((event) {
-  //         Liks.add(event.docs.length);
-  //         postId.add(element.id);
-  //         posts.add(PostModel.fromJson(element.data()));
-  //       });
-  //     });
-  //     emit(ScafullGetPostState());
-  //   }).catchError((e) {
-  //     emit(ErrorGetPostState());
-  //     print(e.toString());
-  //   });
-  // }
-
-  // void getPost() {
-  //   emit(LodingGetPostState());
-  //   FirebaseFirestore.instance
-  //       .collection("post")
-  //       .orderBy("dateTime")
-  //       .snapshots()
-  //       .listen((event) {
-  //     event.docs.forEach((element) {
-  //       element.reference.collection("like").snapshots().listen((event) {
-  //         Liks.add(event.docs.length);
-  //         postId.add(element.id);
-  //         posts.add(PostModel.fromJson(element.data()));
-  //       });
-  //       element.reference.collection("comment").snapshots().listen((event) {
-  //         Commments.add(event.docs.length);
-  //         postId.add(element.id);
-  //         posts.add(PostModel.fromJson(element.data()));
-  //       });
-  //     });
-  //   });
-  // }
   void getPost() {
+    emit(LodingGetPostState());
+    posts.clear();
+    postId.clear();
+    likes.clear();
     FirebaseFirestore.instance
         .collection("post")
-        .orderBy("dateTime")
-        .snapshots()
-        .listen((QuerySnapshot<Map<String, dynamic>> event) {
-      event.docs.forEach((QueryDocumentSnapshot<Map<String, dynamic>> element) {
-        element.reference.collection("like").snapshots().listen((likes) {
-          Liks.add(likes.docs.length);
-        });
-        element.reference.collection("comment").snapshots().listen((comments) {
-          Commments.add(comments.docs.length);
-          postId.add(element.id);
-          posts.add(PostModel.fromJson(element.data()));
-        });
-      });
+        .orderBy("dateTime", descending: true)
+        .get()
+        .then((value) {
+      value.docs.forEach(
+        (element) {
+          element.reference.collection("like").snapshots().listen((value) {
+            likes.add(value.docs.length);
+            posts.add(PostModel.fromJson(element.data()));
+            postId.add(element.id);
+          });
+        },
+      );
+      emit(ScafullGetPostState());
+    }).catchError((erroe) {
+      print("ErrorGetpost $erroe");
     });
   }
 
-  List<int> like = [];
-  void Like(String postId) {
+  void addLike(String postId) {
     emit(LodingLikeState());
-
     FirebaseFirestore.instance
         .collection("post")
         .doc(postId)
@@ -340,33 +309,56 @@ class SocailBloc extends Cubit<SocailState> {
     });
   }
 
-  void sendComment({
-    required String dateTime,
+  List<CommentModel> comments = [];
+
+  List commentId = [];
+
+  void getComments(String postId) {
+    emit(LodingGetCommentsState());
+    FirebaseFirestore.instance
+        .collection("post")
+        .doc(postId)
+        .collection("comments")
+        .orderBy("dateTime", descending: false)
+        .snapshots()
+        .listen((querySnapshot) {
+      comments.clear();
+      querySnapshot.docs.forEach((commentDoc) {
+        comments.add(CommentModel.fromJson(commentDoc.data()));
+        commentId.add(commentDoc.id);
+      });
+
+      emit(ScafullGetCommentsState());
+    });
+  }
+
+  void addComments({
+    required String postid,
     required String text,
-    required String postId,
+    required String dateTime,
     required String name,
     required String image,
   }) {
-    CommentModel model = CommentModel(
-      uid: usermodel?.uid,
+    CommentModel comment = CommentModel(
+      uid: uid,
       dateTime: dateTime,
       text: text,
-      PostId: postId,
+      postId: postid,
       name: name,
       image: image,
     );
     emit(LodingSendCommentState());
     FirebaseFirestore.instance
         .collection("post")
-        .doc(postId)
-        .collection("Comments")
+        .doc(postid)
+        .collection("comments")
         .doc(usermodel?.uid)
-        .collection("comment")
-        .add(model.toMap())
+        .set(comment.toMap())
         .then((value) {
       emit(ScafullSendCommentState());
     }).catchError((e) {
       emit(ErrorSendCommentState());
+      print(e.toString());
     });
   }
 
@@ -503,4 +495,210 @@ class SocailBloc extends Cubit<SocailState> {
       emit(ErorrUploadChatImageState());
     });
   }
+
+  /////////////////////////////////////
+  ///
+  File? imagephoto;
+  void removeimagephoto() {
+    imagephoto == File('');
+    emit(RemovepostImage());
+  }
+
+  Future<void> getImagePhotogallery() async {
+    emit(LodinggetPostImageState());
+
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      imagephoto = File(pickedFile.path);
+
+      emit(ScafullgetPostImageState());
+    } else {
+      print('No image selected.');
+      emit(ErrorgetPostImageState());
+    }
+  }
+
+  Future<void> getImagePhotocamra() async {
+    emit(LodinggetPostImageState());
+
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      imagephoto = File(pickedFile.path);
+
+      emit(ScafullgetPostImageState());
+    } else {
+      print('No image selected.');
+      emit(ErrorgetPostImageState());
+    }
+  }
+
+  void uploadPhotoImage({
+    required String text,
+    required String date,
+    required String postImage,
+  }) {
+    emit(LodingUploadPostImageState());
+    FirebaseStorage.instance
+        .ref()
+        .child("user/${Uri.file(imagephoto!.path).pathSegments.last}")
+        .putFile(imagephoto!)
+        .then((value) {
+      value.ref.getDownloadURL().then((value) {
+        creatAddPhoto(
+          dateTime: date,
+          text: text,
+          postImge: value,
+        );
+        emit(ScafullUploadPostImageState());
+      }).catchError((e) {
+        emit(ErrorUploadImageProfailState());
+      });
+    }).catchError((e) {
+      emit(ErrorUploadImageProfailState());
+    });
+  }
+
+  CollectionReference post = FirebaseFirestore.instance.collection('post');
+  void creatAddPhoto({
+    required String text,
+    String? postImge,
+    required String dateTime,
+  }) async {
+    PostModel model = PostModel(
+      uId: usermodel?.uid,
+      name: usermodel?.name,
+      text: text,
+      image: usermodel?.image,
+      postImage: postImge ?? "",
+      dateTime: dateTime,
+    );
+    emit(LodingCraeatAppPhoto());
+    poto.clear();
+    try {
+      DocumentReference docRef = await post.add(model.toMap());
+      String documentId = docRef.id;
+      print(docRef.id);
+      getphoto();
+      emit(ScafullCraeatAppPhoto());
+    } catch (e) {
+      emit(ErorrCreatPostState());
+      print("Error in creating addPhoto: ${e.toString()}");
+    }
+  }
+
+  List<PostModel> poto = [];
+  List potoId = [];
+
+  void getphoto() async {
+    emit(LodingGetPostState());
+    await FirebaseFirestore.instance
+        .collection('post')
+        .where("uId", isEqualTo: uid)
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        poto.add(PostModel.fromJson(element.data()));
+        potoId.add(element.id);
+        emit(ScafullCreatPoststate());
+      });
+    }).catchError((e) {});
+  }
+
+  void updateAddPhoto({
+    required String text,
+    String? postImge,
+    required String dateTime,
+    String? documentId,
+  }) async {
+    PostModel model = PostModel(
+      uId: usermodel?.uid,
+      name: usermodel?.name,
+      text: text,
+      image: usermodel?.image,
+      postImage: postImge ?? "",
+      dateTime: dateTime,
+    );
+    emit(LoadingUpdateAppPhoto());
+
+    try {
+      await post.doc(documentId).set(model.toMap());
+      emit(SuccessfulUpdateAppPhoto());
+    } catch (e) {
+      emit(ErrorUpdatePostState());
+      print("Error updating the document: $e");
+    }
+  }
+
+  void updatePhotoImage({
+    required String text,
+    required String date,
+    required String postImage,
+    required String documentId,
+  }) {
+    emit(LodindupdatePhotoImage());
+    FirebaseStorage.instance
+        .ref()
+        .child("user/${Uri.file(imagephoto!.path).pathSegments.last}")
+        .putFile(imagephoto!)
+        .then((value) {
+      value.ref.getDownloadURL().then((value) {
+        updateAddPhoto(
+          documentId: documentId,
+          dateTime: date,
+          text: text,
+          postImge: value,
+        );
+        emit(SuccessupdatePhotoImage());
+      }).catchError((e) {
+        emit(ErrorUpdatePostState());
+      });
+    }).catchError((e) {
+      emit(ErrorupdatePhotoImage());
+    });
+  }
+
+  Future<void> deletephoto(String id) {
+    return post.doc(id).delete().then((value) {
+      emit(DeletPersonpost());
+      poto.clear();
+      getphoto();
+      getPost();
+    }).catchError((error) {
+      print("Failed to delete user: $error");
+    });
+  }
+
+  /////like///////////
+
+  // bool isLike = true;
+
+  // void addLike(String likeid) {
+  //   FirebaseFirestore.instance
+  //       .collection("post")
+  //       .doc(likeid)
+  //       .collection("like")
+  //       .doc(usermodel?.uid)
+  //       .set({
+  //         'like': isLike,
+  //       }).then((value) {
+  //      emit(ScafullLikeState());
+  //    }).catchError((error) {
+  //     emit(ErrorLikeState());
+  //    });
+  //  }
+
+  // List<int> numderlike = [];
+  // void getLike() async {
+  //   await FirebaseFirestore.instance
+  //       .collection('post')
+  //       .where("uId", isEqualTo: uid)
+  //       .get()
+  //       .then((value) {
+  //     value.docs.forEach((element) {
+  //       element.reference.collection("like").get().then((value) {
+  //         numderlike.add(value.docs.length);
+  //       }).catchError((e) {});
+  //     });
+  //   }).catchError((e) {});
+  // }
 }

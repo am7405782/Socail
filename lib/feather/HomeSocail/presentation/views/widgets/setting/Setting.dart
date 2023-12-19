@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/Constant.dart';
 import 'package:flutter_application_2/feather/HomeSocail/presentation/Mangments/SocailState.dart';
 import 'package:flutter_application_2/feather/HomeSocail/presentation/Mangments/SocialBloc.dart';
-import 'package:flutter_application_2/feather/HomeSocail/presentation/views/widgets/setting/EditProfail.dart';
+import 'package:flutter_application_2/feather/HomeSocail/presentation/views/widgets/setting/widgets/EditProfail.dart';
+import 'package:flutter_application_2/feather/HomeSocail/presentation/views/widgets/setting/NewPhotoPost.dart';
+import 'package:flutter_application_2/feather/HomeSocail/presentation/views/widgets/setting/buildPostItemsphoto.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -16,8 +18,9 @@ class SettingScreen extends StatelessWidget {
       builder: (context, state) {
         var model = SocailBloc.get(context).usermodel;
         return Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.all(8.0),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(8),
+            physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
                 Stack(
@@ -62,7 +65,7 @@ class SettingScreen extends StatelessWidget {
                 ),
                 Text(
                   "${model?.name}",
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: Colors.black87,
                       fontSize: 18,
                       fontWeight: FontWeight.w400),
@@ -74,89 +77,65 @@ class SettingScreen extends StatelessWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.w400),
                 ),
-                const Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text(
-                              "100",
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 18,
-                              ),
+                      Column(
+                        children: [
+                          Text(
+                            "${SocailBloc.get(context).poto.length}",
+                            style: const TextStyle(
+                              color: Colors.black87,
+                              fontSize: 18,
                             ),
-                            Text(
-                              "post",
-                              style: TextStyle(
-                                  color: Colors.black38,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400),
-                            )
-                          ],
-                        ),
+                          ),
+                          const Text(
+                            "post",
+                            style: TextStyle(
+                                color: Colors.black38,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400),
+                          )
+                        ],
                       ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text(
-                              "90",
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 18,
-                              ),
+                      const Column(
+                        children: [
+                          Text(
+                            "10K",
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 18,
                             ),
-                            Text(
-                              "Photoes",
-                              style: TextStyle(
-                                  color: Colors.black38,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400),
-                            )
-                          ],
-                        ),
+                          ),
+                          Text(
+                            "Flowers",
+                            style: TextStyle(
+                                color: Colors.black38,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400),
+                          )
+                        ],
                       ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text(
-                              "10K",
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 18,
-                              ),
+                      const Column(
+                        children: [
+                          Text(
+                            "50",
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 18,
                             ),
-                            Text(
-                              "Flowers",
-                              style: TextStyle(
-                                  color: Colors.black38,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400),
-                            )
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            Text(
-                              "50",
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 18,
-                              ),
-                            ),
-                            Text(
-                              "Flowing",
-                              style: TextStyle(
-                                  color: Colors.black38,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400),
-                            )
-                          ],
-                        ),
+                          ),
+                          Text(
+                            "Flowing",
+                            style: TextStyle(
+                                color: Colors.black38,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400),
+                          )
+                        ],
                       ),
                     ],
                   ),
@@ -167,7 +146,12 @@ class SettingScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              navigatTo(
+                                context: context,
+                                navig: const NewPhotoPost(),
+                              );
+                            },
                             child: const Text(
                               "AddPhoto",
                             )),
@@ -179,7 +163,7 @@ class SettingScreen extends StatelessWidget {
                           onPressed: () {
                             navigatTo(
                               context: context,
-                              navig: EditProfail(),
+                              navig: const EditProfail(),
                             );
                           },
                           child: const Icon(
@@ -189,11 +173,28 @@ class SettingScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (SocailBloc.get(context).poto.isNotEmpty)
+                  listAddpohto(context),
+                if (SocailBloc.get(context).poto.isEmpty)
+                  const Center(child: CircularProgressIndicator()),
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  ListView listAddpohto(BuildContext context) {
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      separatorBuilder: (context, index) => const SizedBox(
+        height: 10,
+      ),
+      itemBuilder: (context, index) =>
+          buildPohtoItems(context, index, SocailBloc.get(context).poto[index]),
+      itemCount: SocailBloc.get(context).poto.length,
     );
   }
 }

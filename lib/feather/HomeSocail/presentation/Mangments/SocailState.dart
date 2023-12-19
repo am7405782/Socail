@@ -114,3 +114,31 @@ class LodingSendCommentState extends SocailState {}
 class ScafullSendCommentState extends SocailState {}
 
 class ErrorSendCommentState extends SocailState {}
+
+class ToggleLikeState extends SocailState {}
+
+class LodingCraeatAppPhoto extends SocailState {}
+
+class ScafullCraeatAppPhoto extends SocailState {}
+
+class LoadingUpdateAppPhoto extends SocailState {}
+
+class SuccessfulUpdateAppPhoto extends SocailState {}
+
+class ErrorUpdatePostState extends SocailState {}
+
+class LodindupdatePhotoImage extends SocailState {}
+
+class SuccessupdatePhotoImage extends SocailState {}
+
+class ErrorupdatePhotoImage extends SocailState {}
+
+class DeletPersonpost extends SocailState {}
+
+class LodingGetCommentsState extends SocailState {}
+
+class ScafullGetCommentsState extends SocailState {}
+
+class ErrorGetCommentsState extends SocailState {}
+
+class DisLikeState extends SocailState {}

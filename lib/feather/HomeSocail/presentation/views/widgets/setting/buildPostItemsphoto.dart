@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/Model/postModel.dart';
 import 'package:flutter_application_2/feather/HomeSocail/presentation/Mangments/SocialBloc.dart';
 import 'package:flutter_application_2/feather/HomeSocail/presentation/views/widgets/feeds/widgets/comments/Comment.dart';
-import 'package:flutter_application_2/feather/HomeSocail/presentation/views/widgets/feeds/widgets/DetailImage.dart';
+import 'package:flutter_application_2/feather/HomeSocail/presentation/views/widgets/setting/UpdateScreen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-Card buildPostItems(PostModel? post, BuildContext context, index) {
-  var size = MediaQuery.of(context).size;
+Card buildPohtoItems(BuildContext context, index, PostModel? post) {
   return Card(
     clipBehavior: Clip.antiAliasWithSaveLayer,
     margin: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -14,13 +13,13 @@ Card buildPostItems(PostModel? post, BuildContext context, index) {
     child: Column(
       children: [
         const SizedBox(
-          height: 10,
+          height: 3,
         ),
         Row(
           children: [
             CircleAvatar(
               backgroundImage: NetworkImage(
-                "${post?.image}",
+                "${SocailBloc.get(context).usermodel?.image}",
               ),
               radius: 25,
             ),
@@ -34,7 +33,7 @@ Card buildPostItems(PostModel? post, BuildContext context, index) {
                   Row(
                     children: [
                       Text(
-                        "${post?.name}",
+                        "${SocailBloc.get(context).usermodel?.name}",
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -53,9 +52,23 @@ Card buildPostItems(PostModel? post, BuildContext context, index) {
                       ),
                     ],
                   ),
-                  Text(
-                    "${post!.dateTime?.substring(0, 10)}",
-                    style: const TextStyle(fontSize: 12, color: Colors.black38),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "${post!.dateTime?.substring(10, 16)}",
+                        style: const TextStyle(
+                            fontSize: 12, color: Colors.black38),
+                      ),
+                      const SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        "${post.dateTime?.substring(0, 10)}",
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -86,7 +99,22 @@ Card buildPostItems(PostModel? post, BuildContext context, index) {
               onSelected: (value) {
                 // Handle selection here
                 if (value == 'update') {
-                } else if (value == 'remove') {}
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UpdateScreen(
+                        documentId: SocailBloc.get(context)
+                            .potoId[index], // Pass document ID
+                        textPost: post.text!, // Pass text post
+                        imagePost: post.postImage!, // Pass image post
+                      ), // Replace UpdateScreen with your screen
+                    ),
+                  );
+                } else if (value == 'remove') {
+                  SocailBloc.get(context).deletephoto(
+                    SocailBloc.get(context).potoId[index],
+                  );
+                }
               },
             ),
           ],
@@ -109,12 +137,12 @@ Card buildPostItems(PostModel? post, BuildContext context, index) {
         if (post.postImage != "")
           InkWell(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => deatilsphoto(post, context),
-                ),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => deatilsphoto(post, context),
+              //   ),
+              // );
             },
             child: Container(
               width: double.infinity,
@@ -141,25 +169,49 @@ Card buildPostItems(PostModel? post, BuildContext context, index) {
                         SocailBloc.get(context).icon,
                         color: Colors.grey,
                       )),
-                  Text(
-                    "${SocailBloc.get(context).likes[index]}",
-                    style: const TextStyle(color: Colors.black54),
+                  const Text(
+                    '0',
+                    style: TextStyle(color: Colors.black54),
                   ),
                 ],
               ),
               const Spacer(),
               Row(
                 children: [
-                  Text(
-                    "${SocailBloc.get(context).comments.length}",
-                    style: const TextStyle(color: Colors.black54),
+                  const Text(
+                    "0",
+                    style: TextStyle(color: Colors.black54),
                   ),
                   const SizedBox(
                     width: 3,
                   ),
-                  const Text(
-                    "comment",
-                    style: TextStyle(color: Colors.black38),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Comment(
+                              index: index,
+                              postid: SocailBloc.get(context).potoId[index],
+                              post: post,
+                            ),
+                          ));
+                    },
+                    child: const Row(
+                      children: [
+                        Text(
+                          "comments",
+                          style: TextStyle(color: Colors.black38),
+                        ),
+                        SizedBox(
+                          width: 3,
+                        ),
+                        Icon(
+                          FontAwesomeIcons.comment,
+                          color: Colors.black38,
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(
                     width: 3,
@@ -174,90 +226,39 @@ Card buildPostItems(PostModel? post, BuildContext context, index) {
           height: 1,
           color: Colors.black38.withOpacity(0.2),
         ),
-        Row(
-          children: [
-            Expanded(
-              child: WriteComment(
-                post: post,
-                index: index,
-              ),
-            ),
-            Row(
-              children: [
-                IconButton(
-                    onPressed: () {
-                      SocailBloc.get(context)
-                          .addLike(SocailBloc.get(context).postId[index]);
-                    },
-                    icon: const Icon(
-                      FontAwesomeIcons.heart,
-                      color: Colors.red,
-                    )),
-                const Text(
-                  "Like",
-                  style: TextStyle(color: Colors.black54),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-              ],
-            ),
-          ],
-        ),
+        // Row(
+        //   children: [
+        //     Expanded(
+        //       child: WriteComment(
+        //         size: size,
+        //         post: post!,
+        //         index: index,
+        //       ),
+        //     ),
+        //     Row(
+        //       children: [
+        //         IconButton(
+        //             onPressed: () {
+        //               SocailBloc.get(context)
+        //                   .postLike(SocailBloc.get(context).postId[index]);
+        //               print(SocailBloc.get(context).postId[index]);
+        //             },
+        //             icon: const Icon(
+        //               FontAwesomeIcons.heart,
+        //               color: Colors.red,
+        //             )),
+        //         const Text(
+        //           "Like",
+        //           style: TextStyle(color: Colors.black54),
+        //         ),
+        //         SizedBox(
+        //           width: 5,
+        //         ),
+        //       ],
+        //     ),
+        //   ],
+        // ),
       ],
     ),
   );
-}
-
-class WriteComment extends StatelessWidget {
-  const WriteComment({
-    super.key,
-    required this.post,
-    required this.index,
-  });
-
-  final PostModel post;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Comment(
-                post: post,
-                index: index,
-                postid: SocailBloc.get(context).postId[index],
-              ),
-            ));
-      },
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.05,
-        decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(30)),
-        margin: const EdgeInsets.only(left: 15, right: 15),
-        child: Row(
-          children: [
-            SizedBox(
-              child: CircleAvatar(
-                backgroundImage:
-                    NetworkImage("${SocailBloc.get(context).usermodel?.image}"),
-              ),
-            ),
-            const SizedBox(
-              width: 30,
-            ),
-            Text(
-              "${SocailBloc.get(context).comments.length}",
-              // "Write Comment",
-              style: TextStyle(color: Colors.black45),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

@@ -36,7 +36,7 @@ class CreatAccount extends Cubit<CratAccountState> {
         phone: phone,
         uid: value.user!.uid,
       );
-      print(value.user?.email);
+
       emit(CreatScafullState());
     }).catchError((error) {
       print(error.toString());
